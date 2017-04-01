@@ -17,7 +17,6 @@ namespace Test
 
             return commonNode.AverageAccess / optimalNode.AverageAccess;
         }
-        
 
         static void Main(string[] args)
         {
