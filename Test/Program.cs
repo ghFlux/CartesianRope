@@ -11,8 +11,8 @@ namespace Test
 
         static double GetAdvantage(int arrSize, int minLength, int maxLength)
         {
-            var nodes = Enumerable.Range(0, arrSize).Select(dummy => new TreapNode<int>(rnd.Next(), rnd.Next(minLength, maxLength)));
-            var commonNode = nodes.Aggregate(TreapNode<int>.Merge);
+            var nodes = Enumerable.Range(0, arrSize).Select(dummy => new TreapNode<int>(null, rnd.Next(), rnd.Next(minLength, maxLength)));
+            var commonNode = nodes.Aggregate(Rope<int>.Merge);
             var optimalNode = TreapNode<int>.ConstructOptimal(commonNode.Flatten());
 
             return commonNode.AverageAccess / optimalNode.AverageAccess;
