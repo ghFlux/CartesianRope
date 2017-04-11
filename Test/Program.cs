@@ -2,6 +2,7 @@
 using System.Linq;
 using CartesianRope;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 namespace Test
 {
@@ -11,9 +12,9 @@ namespace Test
 
         static double GetAdvantage(int arrSize, int minLength, int maxLength)
         {
-            var nodes = Enumerable.Range(0, arrSize).Select(dummy => new TreapNode<int>(null, rnd.Next(), rnd.Next(minLength, maxLength)));
-            var commonNode = nodes.Aggregate(Rope<int>.Merge);
-            var optimalNode = TreapNode<int>.ConstructOptimal(commonNode.Flatten());
+            var nodes = Enumerable.Range(0, arrSize).Select(dummy => new Rope<int>(new int[rnd.Next(minLength, maxLength)]));
+            var commonNode = nodes.Aggregate((a, b) => a + b);
+            var optimalNode = commonNode.Optimized();
 
             return commonNode.AverageAccess / optimalNode.AverageAccess;
         }
