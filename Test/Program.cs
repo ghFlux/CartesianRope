@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using CartesianRope;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 
 namespace Test
 {
@@ -16,6 +14,8 @@ namespace Test
             var commonNode = nodes.Aggregate((a, b) => a + b);
             var optimalNode = commonNode.Optimized();
 
+            var s2 = commonNode.Range(rnd.Next(commonNode.Length));
+
             return commonNode.AverageAccess / optimalNode.AverageAccess;
         }
 
@@ -26,9 +26,8 @@ namespace Test
             const int minLength = 1, maxLength = 25;
 
             var ratios = Enumerable.Range(0, testCount).Select(x => GetAdvantage(arrSize, minLength, maxLength)).ToArray();
-
             Array.Sort(ratios);
-            
+
             Console.WriteLine($"Optimal is better in {ratios.Min()} - {ratios.Max()} times.");
             Console.WriteLine($"Average is {ratios.Average()}, median is {ratios[ratios.Length / 2]}");
         }

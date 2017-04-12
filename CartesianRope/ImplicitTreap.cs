@@ -7,11 +7,11 @@ using System.Collections.Generic;
 
 namespace CartesianRope
 {
-    [DebuggerDisplay("{GetSize(Left)} - [{Length}] - {GetSize(Right)}")]
+    [DebuggerDisplay("Rope<{typeof(T).Name}>[{Length}]")]
     public sealed partial class Rope<T>
     {
         internal TreapNode Root { get; set; }
-        private static Random RandomGenerator { get; set; } = new Random();
+        private static Random RandomGenerator { get; } = new Random();
         public static int DirectCopyThreshold { get; set; } = 32;
 
         public int Length { get; private set; }
@@ -20,7 +20,7 @@ namespace CartesianRope
         private Rope(TreapNode root)
         {
             Root = root;
-            Length = (Root == null) ? 0 : Root.Length;
+            Length = (Root == null) ? 0 : Root.Size;
         }
 
         public Rope(IEnumerable<T> sequence) : this(new TreapNode(sequence.ToArray()))
@@ -35,12 +35,12 @@ namespace CartesianRope
             if (L.Priority > R.Priority)
             {
                 var newR = Merge(L.rChild, R);
-                return new TreapNode(null, L.Priority, L.Length, L.lChild, newR);
+                return new TreapNode(L.Data, L.Offset, L.Length, L.Priority, L.lChild, newR);
             }
             else
             {
                 var newL = Merge(L, R.lChild);
-                return new TreapNode(null, R.Priority, R.Length, newL, R.rChild);
+                return new TreapNode(R.Data, R.Offset, R.Length, R.Priority, newL, R.rChild);
             }
         }
 
@@ -52,9 +52,7 @@ namespace CartesianRope
             Traverse(node.rChild, action);
         }
 
-        /// <summary>
-        /// Splits node content into two trees by index.
-        /// </summary>
+        /// <summary> Splits node content into two trees by specified <see cref="index"/>. </summary>
         /// <param name="node">Node to split</param>
         /// <param name="index">Splitting index</param>
         /// <param name="L">Left resulting tree</param>
@@ -72,7 +70,7 @@ namespace CartesianRope
                 else
                     Split(node.rChild, index - rBound, out newTree, out R);
 
-                L = new TreapNode(node.Data, node.Priority, node.Length, node.lChild, newTree);
+                L = new TreapNode(node.Data, node.Offset, node.Length, node.Priority, node.lChild, newTree);
             }
             else if (index < lBound) // going left
             {
@@ -81,13 +79,27 @@ namespace CartesianRope
                 else
                     Split(node.lChild, index, out L, out newTree);
 
-                R = new TreapNode(node.Data, node.Priority, node.Length, newTree, node.rChild);
+                R = new TreapNode(node.Data, node.Offset, node.Length, node.Priority, newTree, node.rChild);
             }
             else // split node in middle
             {
                 index -= lBound;
-                L = new TreapNode(data: node.Data, priority: RandomGenerator.Next(), len: index, left: node.lChild, right: null);
-                R = new TreapNode(data: node.Data, priority: RandomGenerator.Next(), len: node.Length - index, left: null, right: node.rChild);
+                L = new TreapNode(
+                        data: node.Data,
+                        offset: node.Offset,
+                        length: index,
+                        priority: RandomGenerator.Next(),
+                        left: node.lChild,
+                        right: null
+                    );
+                R = new TreapNode(
+                        data: node.Data,
+                        offset: node.Offset + index,
+                        length: node.Length - index,
+                        priority: RandomGenerator.Next(),
+                        left: null,
+                        right: node.rChild
+                    );
             }
         }
 
@@ -121,34 +133,38 @@ namespace CartesianRope
                 else // split node
                 {
                     L = new TreapNode(
-                            data: node.Data,
-                            priority: RandomGenerator.Next(),
-                            len: index,
-                            left: node.lChild,
-                            right: null
+                        data: node.Data,
+                        offset: node.Offset,
+                        length: index,
+                        priority: RandomGenerator.Next(),
+                        left: node.lChild,
+                        right: null
                         );
                     R = new TreapNode(
-                            data: node.Data,
-                            priority: RandomGenerator.Next(),
-                            len: node.Length - index,
-                            left: null,
-                            right: node.rChild
+                        data: node.Data,
+                        offset: node.Offset + index,
+                        length: node.Length - index,
+                        priority: RandomGenerator.Next(),
+                        left: null,
+                        right: node.rChild
                         );
+                    break;
                 }
-                while (path.Count > 0)
-                {
-                    var currentNode = path.Pop();
+            }
 
-                }
+            Console.Error.WriteLine(string.Join("\n", path.Reverse()));
 
-                Console.WriteLine(string.Join(" - ", path.Select(p => p.Size)));
+            while (path.Count > 0)
+            {
+                var currentNode = path.Pop();
+
             }
         }
 
         private static TreapNode[] Flatten(TreapNode root)
         {
             List<TreapNode> result = new List<TreapNode>();
-            Traverse(root, node => result.Add(new TreapNode(node.Data, node.Priority, node.Length)));
+            Traverse(root, node => result.Add(new TreapNode(node.Data, node.Offset, node.Length, node.Priority)));
             return result.ToArray();
         }
 
@@ -168,7 +184,7 @@ namespace CartesianRope
                     int bestCost = int.MaxValue;
                     for (int split = from; split <= to; split++)
                     {
-                        TreapNode tmp = new TreapNode(null, arr[split].Priority, arr[split].Length, construct(from, split - 1), construct(split + 1, to));
+                        TreapNode tmp = new TreapNode(arr[split].Data, arr[split].Offset, arr[split].Length, arr[split].Priority, construct(from, split - 1), construct(split + 1, to));
                         if (tmp.Cost < bestCost) bestCost = (res = tmp).Cost;
                     }
                 }
@@ -192,6 +208,15 @@ namespace CartesianRope
         public static Rope<T> operator +(Rope<T> lhs, Rope<T> rhs)
         {
             return new Rope<T>(Merge(lhs.Root, rhs.Root));
+        }
+
+        public Rope<T> Range(int index)
+        {
+            TreapNode L, R;
+            Split(Root, index, out L, out R);
+            Rope<T> res = new Rope<T>(R);
+            if (res.Length + index != this.Length) throw new Exception(":(");
+            return res;
         }
     }
 }
