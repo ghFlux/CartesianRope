@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{69236B1C-544E-4053-BCCF-C1B3F58B34FD}</ProjectGuid>
+    <ProjectGuid>{9EFD4C3D-7C36-4101-9BFF-E5EAF5A33E6E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CartesianRope.Tests</RootNamespace>

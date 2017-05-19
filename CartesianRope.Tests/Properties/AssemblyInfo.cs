@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("CartesianRope.Tests")]
@@ -12,7 +13,7 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
 
-[assembly: Guid("69236b1c-544e-4053-bccf-c1b3f58b34fd")]
+[assembly: Guid("9efd4c3d-7c36-4101-9bff-e5eaf5a33e6e")]
 
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
