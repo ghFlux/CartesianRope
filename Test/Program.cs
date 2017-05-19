@@ -21,10 +21,10 @@ namespace Test
 
         static void Main(string[] args)
         {
-            const int testCount = 100;
-            const int arrSize = 50;
-            const int minLength = 1, maxLength = 25;
-
+            const int testCount = 10;
+            const int arrSize = 150;
+            const int minLength = 1, maxLength = 1;
+            
             var ratios = Enumerable.Range(0, testCount).Select(x => GetAdvantage(arrSize, minLength, maxLength)).ToArray();
             Array.Sort(ratios);
 
