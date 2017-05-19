@@ -26,7 +26,7 @@ namespace CartesianRope.Tests
         {
             Rope<int> rope = new Rope<int>(new int[] { 1, 3, 4 });
             var rootCopy = rope.Root.Clone() as Rope<int>.TreapNode;
-            //rope.Range(1);
+            rope.Range(1);
             var newRoot = rope.Root;
             Assert.IsTrue(newRoot.Equals(rootCopy));
         }
