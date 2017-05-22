@@ -11,7 +11,7 @@ namespace CartesianRope
     {
         internal TreapNode Root { get; set; }
         internal static Random RandomGenerator { get; set; } = new Random();
-        public static int DirectCopyThreshold { get; } = 32;
+        public static int DirectCopyThreshold { get; set; } = 32;
 
         public int Length { get; private set; }
         public double AverageAccess => Root == null ? 0 : Root.AverageAccess;
@@ -35,6 +35,16 @@ namespace CartesianRope
         {
             if (L == null) return R;
             if (R == null) return L;
+
+            if (L.Size + R.Size <= DirectCopyThreshold)
+            {
+                Debug.Assert(L.LChild == null && L.RChild == null);
+                Debug.Assert(R.LChild == null && R.RChild == null);
+                T[] dataArray = new T[L.Size + R.Size];
+                Array.Copy(L.Data, L.Offset, dataArray, 0, L.Length);
+                Array.Copy(R.Data, R.Offset, dataArray, L.Length, R.Length);
+                return new TreapNode(dataArray);
+            }
 
             if (L.Priority > R.Priority)
             {
@@ -265,5 +275,7 @@ namespace CartesianRope
         {
             get { return Index(index); }
         }
+
+        
     }
 }

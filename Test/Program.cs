@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CartesianRope;
 
@@ -19,6 +20,13 @@ namespace Test
             return commonNode.AverageAccess / optimalNode.AverageAccess;
         }
 
+        static int[] RopeChunkSizes<T>(Rope<T> rope)
+        {
+            List<int> result = new List<int>();
+            Rope<T>.Traverse(rope.Root, node => result.Add(node.Length));
+            return result.ToArray();
+        }
+
         static void Main(string[] args)
         {
             const int testCount = 100;
@@ -30,6 +38,15 @@ namespace Test
 
             Console.WriteLine($"Optimal is better in {ratios.Min()} - {ratios.Max()} times.");
             Console.WriteLine($"Average is {ratios.Average()}, median is {ratios[ratios.Length / 2]}");
+
+
+            var sampleArray = new int[] { 1, 2, 3};
+            Rope<int>.DirectCopyThreshold = 60;
+            Rope<int> rope = Enumerable.Range(0, 10).Select(__ => new Rope<int>(sampleArray)).Aggregate((acc, r) => acc + r);
+
+            var chunkSizes = RopeChunkSizes(rope);
+            Console.WriteLine(string.Join(" ", chunkSizes));
+
         }
     }
 }

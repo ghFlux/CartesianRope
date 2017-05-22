@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("CartesianRope.Tests")]
+[assembly: InternalsVisibleTo("Test")]
 
 [assembly: AssemblyTitle("CartesianRope")]
 [assembly: AssemblyDescription("")]
