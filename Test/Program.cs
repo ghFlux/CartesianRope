@@ -30,8 +30,8 @@ namespace Test
         static void Main(string[] args)
         {
             const int testCount = 100;
-            const int arrSize = 5;
-            const int minLength = 1, maxLength = 5;
+            const int arrSize = 50;
+            const int minLength = 20, maxLength = 25;
             
             var ratios = Enumerable.Range(0, testCount).Select(x => GetAdvantage(arrSize, minLength, maxLength)).ToArray();
             Array.Sort(ratios);
@@ -41,12 +41,11 @@ namespace Test
 
 
             var sampleArray = new int[] { 1, 2, 3};
-            Rope<int>.DirectCopyThreshold = 60;
+            Rope<int>.DirectCopyThreshold = 0;
             Rope<int> rope = Enumerable.Range(0, 10).Select(__ => new Rope<int>(sampleArray)).Aggregate((acc, r) => acc + r);
 
             var chunkSizes = RopeChunkSizes(rope);
             Console.WriteLine(string.Join(" ", chunkSizes));
-
         }
     }
 }

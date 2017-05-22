@@ -26,7 +26,7 @@ namespace CartesianRope
         [Pure]
         public Rope(IEnumerable<T> sequence)
         {
-            Root = sequence.Select(item => new TreapNode(new T[] { item })).Aggregate(null as TreapNode, Merge);
+            Root = new TreapNode(sequence.ToArray());
             Length = (Root == null) ? 0 : Root.Size;
         }
 
@@ -47,15 +47,9 @@ namespace CartesianRope
             }
 
             if (L.Priority > R.Priority)
-            {
-                var newR = Merge(L.RChild, R);
-                return new TreapNode(L.Data, L.Offset, L.Length, L.Priority, L.LChild, newR);
-            }
+                return new TreapNode(L.Data, L.Offset, L.Length, L.Priority, L.LChild, Merge(L.RChild, R));
             else
-            {
-                var newL = Merge(L, R.LChild);
-                return new TreapNode(R.Data, R.Offset, R.Length, R.Priority, newL, R.RChild);
-            }
+                return new TreapNode(R.Data, R.Offset, R.Length, R.Priority, Merge(L, R.LChild), R.RChild);
         }
 
         [Pure]
@@ -275,7 +269,5 @@ namespace CartesianRope
         {
             get { return Index(index); }
         }
-
-        
     }
 }
