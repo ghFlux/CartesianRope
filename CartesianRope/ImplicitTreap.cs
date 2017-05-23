@@ -3,11 +3,12 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Collections;
 
 namespace CartesianRope
 {
     [DebuggerDisplay("Rope<{typeof(T).Name}>[{Length}]")]
-    public sealed partial class Rope<T>
+    public sealed partial class Rope<T> : IEnumerable<T>
     {
         internal TreapNode Root { get; set; }
         internal static Random RandomGenerator { get; set; } = new Random();
@@ -263,6 +264,24 @@ namespace CartesianRope
                     }
                 }
             }
+        }
+
+        private IEnumerable<T> Enumerate()
+        {
+            for (int i = 0; i < Length; i++)
+            {
+                yield return this[i];
+            }
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return Enumerate().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         public T this[int index]

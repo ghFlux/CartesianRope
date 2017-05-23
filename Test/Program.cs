@@ -41,11 +41,12 @@ namespace Test
 
 
             var sampleArray = new int[] { 1, 2, 3};
-            Rope<int>.DirectCopyThreshold = 0;
-            Rope<int> rope = Enumerable.Range(0, 10).Select(__ => new Rope<int>(sampleArray)).Aggregate((acc, r) => acc + r);
+            Rope<int>.DirectCopyThreshold = 6;
+            Rope<int> rope = Enumerable.Range(0, 5).Select(__ => new Rope<int>(sampleArray)).Aggregate((acc, r) => acc + r);
 
             var chunkSizes = RopeChunkSizes(rope);
-            Console.WriteLine(string.Join(" ", chunkSizes));
+            Console.WriteLine($"Chunk sizes of rope: {string.Join(" ", chunkSizes)}");
+            Console.WriteLine($"RopeContent: [{string.Join(" ", rope)}]");
         }
     }
 }
